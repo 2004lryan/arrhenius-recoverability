@@ -45,6 +45,16 @@ def numbers(tex: str) -> list[str]:
     out = []
     for line in strip_comments(tex).split("\n"):
         body = re.sub(r"\\@(?:plus|minus)\s*-?\d*\.?\d+\s*(?:pt|em|ex|mm|cm|in|sp|bp|dd|cc)?", " ", line)
+        # 「数值 + 长度宏」是排版尺寸不是主张数字：p{0.52\columnwidth} 里的 0.52 曾被读成
+        # "英文独有的数字"。数值在宏之前，TYPESET_CTX 只吃宏名、吃不掉它，须单独剥。
+        body = re.sub(
+            r"-?\d*\.?\d+\s*\\(?:columnwidth|textwidth|linewidth|paperwidth|"
+            r"textheight|paperheight|baselineskip|arraystretch|tabcolsep|dimexpr)",
+            " ", body)
+        # 带单位的长度值。刻意不含 "in"、且不允许空格：英文正文的
+        # "0.948 in the low-Psi decile" 会被 "\d+\.\d+ in" 吃掉，而中文稿无此写法，
+        # 反而制造"中文独有"的假阳性——与本轮 \approx0.01 同源的陷阱。
+        body = re.sub(r"(?<![\w.])-?\d*\.\d+(?:pt|em|ex|mm|cm|sp|bp|dd|cc)(?![\w])", " ", body)
         body = TYPESET_CTX.sub(" ", body)
         body = re.sub(r"10\.\d{4,}/\S+", " ", body)          # DOI
         body = re.sub(r"https?://\S+", " ", body)            # URL

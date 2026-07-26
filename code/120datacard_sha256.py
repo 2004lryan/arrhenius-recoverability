@@ -11,6 +11,15 @@
 但稿件表 tab:data 的表注声称各数据集"经确定性 L1 预处理并附 SHA-256 校验"。
 本脚本把该声明做实：对稿件实际依赖的每个文件计算 SHA-256 并落盘登记。
 
+诚实注记（2026-07-26 修正）
+--------------------------------
+本清单最初写在 `03data/.datalock-manifest.tsv`。那是错的：该路径由 `datalock.sh`
+独占，其 schema 为 `sha256⇥size⇥ts⇥相对 03data 的路径`，而本脚本写的是
+`kind⇥id⇥sha256⇥bytes⇥绝对路径`。撞名的后果是 `datalock.sh verify` 把本清单
+15 条连同表头全判为 MISSING，`checkpoint.sh` 因「数据完整性校验失败」而永久拒绝提交。
+本清单的覆盖范围本来就与 datalock 不同（跨 03data / 04outputs / 只读的跨项目共享库），
+无法用相对 DATA_DIR 的路径表达，故改放到数据卡旁边，两套登记各管各的。
+
 覆盖范围（只登记 C5 稿件真正用到的文件，不含 C6 遗留产物）
 ----------------------------------------------------------
 A. 源数据（他组已发表表格的提取件 + 第三体系原始数据）
@@ -18,7 +27,7 @@ B. 派生产物（正文与补充材料每个数字的来源 JSON/CSV）
 
 输出
 ----
-- `03data/.datalock-manifest.tsv`  逐文件 SHA-256 清单（TSV）
+- `06doc/0NDATACARD_C5_manifest.tsv`  逐文件 SHA-256 清单（TSV）
 - `06doc/0NDATACARD_C5.md`         中文数据卡（§1 项目内部工作区中文强制）
 - `04outputs/120datacard_sha256.json`
 
@@ -116,7 +125,7 @@ def main() -> None:
         rows.append({"kind": "derived", "id": Path(rel).stem, "path": str(p), "sha256": d, "bytes": n, "name": desc})
 
     # 1) manifest TSV
-    man = ROOT / "03data/.datalock-manifest.tsv"
+    man = ROOT / "06doc/0NDATACARD_C5_manifest.tsv"
     with man.open("w", encoding="utf-8") as f:
         f.write("kind\tid\tsha256\tbytes\tpath\n")
         for r in rows:
@@ -149,7 +158,7 @@ def main() -> None:
     for r in [x for x in rows if x["kind"] == "derived"]:
         L.append(f"| `{Path(r['path']).name}` | {r['name']} | {r['bytes']:,} | `{r['sha256'][:16]}` |")
     L += [
-        "\n完整 64 位摘要见 `03data/.datalock-manifest.tsv`。",
+        "\n完整 64 位摘要见 `06doc/0NDATACARD_C5_manifest.tsv`。",
         "\n---\n\n## 三、与稿件的对应",
         "- 稿件表 `tab:data`（数据卡表）列出的三个真实体系即本卡第一节三项。",
         "- 稿件正文与补充材料的每个数字，其来源产物见本卡第二节，并在 `06doc/02sub/claim_evidence_map.md` 中逐条绑定。",

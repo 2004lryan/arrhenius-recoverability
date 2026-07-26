@@ -1,122 +1,71 @@
-# Data card — recoverability trichotomy for Arrhenius inversion
+# 0NDATACARD_C5.md — C5 稿件数据卡（SHA-256 登记）
 
-Covers every dataset used by the manuscript. Fields follow the project data-card
-standard (source & license, SHA-256, granularity & units, sample statistics,
-split logic, known biases, label reliability, preprocessing pointer, ethics).
+生成时间：2026-07-26 04:17:49 -0400 · 生成脚本：`02code/120datacard_sha256.py`
 
-Generated from `code/120datacard_sha256.py`; the full 64-hex digests below are
-the authoritative record. **No new data were collected for this work.**
+> 依据 `01CLAUDE.md` §4.6 / §202。本卡只登记 **C5 稿件（`Elsevier_zh.tex` / `Elsevier_en.tex`）实际依赖**的文件，
+> 不含 C6/光谱方向的历史产物（`03data/processed/` 下 35 项与本稿无关）。
 
-> **What SHA-256 does and does not certify.** The digests certify that the files
-> have not changed *since registration*. They say nothing about the period before
-> registration, and they are not evidence that the extraction step is correct —
-> extraction correctness rests on `pandas.read_html` plus the value-by-value
-> re-check described under each system.
+> **诚实边界**：SHA-256 仅证明**自本次登记起**文件字节未变，不追认登记之前的历史，
+> 也不构成对提取步骤正确性的证明——提取正确性由脚本 55 的 `read_html` 与人工/Europe PMC 逐条核验承担。
 
 ---
 
-## System 1 — Apple firmness under a temperature gradient
+## 一、源数据
 
-- **Source & license.** Table A1 of an open-access article, Foods 2023,
-  [doi:10.3390/foods12112113](https://doi.org/10.3390/foods12112113)
-  (PMC10253207). CC BY 4.0. Collected by another group, not by us.
-- **SHA-256.** `d22131f037a120e71a321d358e141ea0b8b2b8b97c4299706f4b0c8fad66665f`
-  (`PMC10253207_T16.csv`, 1,770 bytes)
-- **Granularity & units.** One row per (storage temperature, elapsed time).
-  Temperature in °C; time in hours; firmness in kg·cm⁻², reported as
-  mean ± standard deviation.
-- **Sample statistics.** 25 data rows (the file carries a second header row):
-  5 storage temperatures (2, 4, 6, 8, 10 °C) × 5 time points (0, 12, 24, 36,
-  48 h), with one firmness column per cultivar — 4 cultivars (Granny Smith,
-  Pink Lady, Red Delicious, Royal Gala). Only published per-temperature means
-  are available — **there are no replicate observations.**
-- **Split logic.** No train/test split. The design-window sweep enumerates all
-  26 temperature subsets of size ≥ 2; these subsets are **nested and therefore
-  not independent**, which is why the paper reports rank correlations without
-  p-values.
-- **Known biases.** (i) Pink Lady is non-monotone — firmness rises first at 2 °C
-  through physiological after-ripening — and yields an unstable inversion
-  (Eₐ = 858 kJ/mol, R² = 0.55); the paper keeps it precisely as the pathological
-  case the diagnostic should flag. (ii) The temperature range is narrow
-  (2–10 °C), which is the regime the paper is about, not a defect.
-- **Label reliability.** Firmness is an instrumental measurement reported with
-  its standard deviation by the original authors; we did not re-measure it.
-- **Preprocessing pointer.** `code/55fetch_pmc_tables.py` (extraction via
-  `pandas.read_html`, then checked by hand row by row against the published
-  table); `code/54c5_realkinetics.py` and `code/91c5_realkinetics_killer.py`
-  (inversion, design sweep, heuristic comparison).
-- **Ethics.** Plant material only. No human or animal subjects; no personal data.
+### apple_firmness — 苹果硬度温度梯度（4 品种 × 5 贮温 × 5 时间点）
+- **角色**：C5 真实动力学 / 体系 1
+- **来源**：Foods 2023, doi:10.3390/foods12112113 (PMC10253207) 表 A1（开放获取）
+- **获取/提取方式**：pandas.read_html 提取（脚本 55）+ 人工逐条核验；非本组采集
+- **许可**：CC BY 4.0（Foods 为全开放获取）
+- **在盘路径**：`03data/processed/pmc_real/PMC10253207_T16.csv`
+- **大小**：1,770 bytes
+- **SHA-256**：`d22131f037a120e71a321d358e141ea0b8b2b8b97c4299706f4b0c8fad66665f`
 
-## System 2 — Long-shelf-life food kinetics (ammonia / TBARS)
+### food_ammonia_tbars — 长货架期食品 氨/TBARS 累积动力学（5 食品 × 4 贮温，10 序列）
+- **角色**：C5 真实动力学 / 体系 2
+- **来源**：Foods 2022 11(14):2004, doi:10.3390/foods11142004 (PMC9319022) 表 3
+- **获取/提取方式**：pandas.read_html 提取（脚本 55）+ Europe PMC fullTextXML 独立重抓逐值核对（132 行 0 处不一致）
+- **许可**：CC BY 4.0
+- **在盘路径**：`03data/processed/pmc_real/PMC9319022_T3.csv`
+- **大小**：5,239 bytes
+- **SHA-256**：`ee6da3d22db941fe2936bba9817e3aa7873e408024ae9ab95d6bf48d536ccfbe`
 
-- **Source & license.** Table 3 of an open-access article, Foods 2022;11(14):2004,
-  [doi:10.3390/foods11142004](https://doi.org/10.3390/foods11142004)
-  (PMC9319022). CC BY 4.0. Collected by another group.
-- **SHA-256.** `ee6da3d22db941fe2936bba9817e3aa7873e408024ae9ab95d6bf48d536ccfbe`
-  (`PMC9319022_T3.csv`, 5,239 bytes)
-- **Granularity & units.** One row per (food, storage time, storage temperature).
-  Time in months; temperature in °C; ammonia content in mg/kg; TBARS in A538/mg.
-  Values are mean ± standard deviation with the original significance letters kept.
-  Note: the published table wraps long food names across lines, so the raw
-  `Sample` column is fragmented (e.g. "Instant" / "goulash" / "soup" are three
-  pieces of one name); the food identity is reassembled downstream, not in the
-  extracted CSV.
-- **Sample statistics.** 145 data rows (the file carries a second header row);
-  5 foods × 4 storage temperatures (−18, 5, 25, 40 °C; the initial time point is
-  recorded as "-"), giving 10 usable kinetic sequences.
-- **Split logic.** No split; each (food, response) pair is inverted separately.
-- **Known biases.** Two chemically distinct responses (ammonia accumulation and
-  lipid oxidation) are pooled as independent kinetic sequences; they share the
-  same storage batches, so the sequences are not fully independent across
-  responses within a food.
-- **Label reliability.** Published means with standard deviations; the extraction
-  was **independently re-scraped from the Europe PMC `fullTextXML` and compared
-  value by value — 132 rows, 0 discrepancies.**
-- **Preprocessing pointer.** `code/55fetch_pmc_tables.py` (extraction),
-  `code/99_realkinetics2.py` (inversion).
-- **Ethics.** Processed food products. No human or animal subjects.
-
-## System 3 — Hass avocado postharvest ripening
-
-- **Source & license.** Mendeley Data,
-  [doi:10.17632/3xd9n945v8.1](https://doi.org/10.17632/3xd9n945v8.1). CC BY 4.0.
-  Collected by another group. **Referenced read-only and not re-hosted here.**
-- **SHA-256.** `f8abeaba6eedf67869907b3a71ee132cd89b42bb3dcce6b25ddb22e6269b51a7`
-  (`Avocado Ripening Dataset.xlsx`, 633,351 bytes)
-- **Granularity & units.** One row per fruit per photography day. Ripening index
-  on a 5-level ordinal scale; storage temperature in °C; time in days.
-- **Sample statistics.** 478 fruit × 3 storage conditions; 14,722 records of
-  daily two-sided photography. At the two nominally known temperatures (10 °C
-  and 20 °C) there are 155 and 127 **fully independent individuals**
-  (282 in total), with between-individual standard deviations of 2.7 and 0.6
-  days in days-to-ripeness.
-- **Split logic.** Resampling is at the **individual** level (cluster bootstrap
-  over the 282 independent fruit), never at the record level — records from one
-  fruit are correlated.
-- **Known biases.** Only two of the three storage conditions have a nominally
-  known temperature, so this system covers the sample-size axis of
-  Ψ = n·(ΔT)² but **not** the design-window axis. The paper states this
-  limitation explicitly (§Scope, L4/L5).
-- **Label reliability.** The ripening index is a visual ordinal grading by the
-  original authors; the derived rate is the reciprocal of the number of days to
-  first reach level 5. Its dispersion is genuine biological variation, not
-  injected noise.
-- **Preprocessing pointer.** `code/102_avocado_c5_pilot.py` — the original xlsx
-  is read directly with **no numerical transformation**.
-- **Ethics.** Plant material only; the photographs contain no people.
-
-## Semi-synthetic data
-
-- **Source.** Generated, not measured. Produced deterministically from fixed
-  seeds by `code/43trichotomy_formal.py`; not shipped as files.
-- **Role.** The only evidence for the phase transition itself. The real systems
-  validate the design rule, **not** the transition — stated as such in the paper.
-- **Ethics.** Not applicable.
+### hass_avocado — Hass 牛油果采后成熟（478 果 × 3 组贮藏，14,722 条记录）
+- **角色**：C5 真实动力学 / 体系 3（真统计估计误差）
+- **来源**：Mendeley Data, doi:10.17632/3xd9n945v8.1
+- **获取/提取方式**：原始 xlsx 直接读取（未做 L1 变换）；按 4.5 只读引用，未复制进项目
+- **许可**：CC BY 4.0（Mendeley Data 默认）
+- **在盘路径**：`<EXTERNAL_DATA_ROOT>/004_hass_avocado_rgb_ripening/Hass Avocado Ripening Photographic Dataset/Avocado Ripening Dataset.xlsx`
+- **大小**：633,351 bytes
+- **SHA-256**：`f8abeaba6eedf67869907b3a71ee132cd89b42bb3dcce6b25ddb22e6269b51a7`
 
 ---
 
-## Derived artefacts
+## 二、派生产物（稿件每个数字的来源）
 
-The SHA-256 digest of every derived result file backing a number in the
-manuscript is listed in `../data/DATA.md` and reproduced by
-`code/120datacard_sha256.py`.
+| 产物 | 内容 | bytes | SHA-256 (前 16) |
+| --- | --- | ---: | --- |
+| `43trichotomy_formal.json` | 半合成三分律：Ψ 终值、塌缩斜率、Krug 匹配 | 1,317 | `3ddee85bf7b57f03` |
+| `54c5_realkinetics.json` | 苹果体系：品种 Ea/R²、设计扫描、超定子集 | 5,987 | `9ba2ab597b83d50a` |
+| `54c5_realkinetics-designsweep.csv` | 苹果 26 温度子集逐条（补充表 S2 数据源） | 4,115 | `2b1769aa0b095d56` |
+| `91c5_realkinetics_killer.json` | Ψ vs 廉价启发式判别力、Ψ_het 跨体系 | 4,103 | `64fc189dacbb29c7` |
+| `99_realkinetics2.json` | 食品体系：Ea 范围、同质/异质 Ψ 复现 | 14,092 | `7b541f1778481b00` |
+| `102_avocado_c5_pilot.json` | 牛油果体系：真统计估计误差、n 轴扫描 | 2,519 | `125ba608e1256276` |
+| `119pazman_pronzato_bridge.json` | 与 Pázman–Pronzato 2006 算例的坐标对照 | 2,236 | `6d5f827620897f26` |
+| `122criterion_bakeoff.json` | 准则对决（含对自身假设的证伪：塌缩=代数、D 对比未建立） | 4,854 | `273a0263ec9b06b8` |
+| `123montecarlo_criterion_study.json` | 1000 独立设计 Monte-Carlo：两轴速率、饱和、决策 regret | 5,924 | `ebaea2757742c77a` |
+| `123montecarlo_criterion_study-designs.csv` | 逐设计表：准则值 + 真值 RMSE（正文 §sec:mc 数据源） | 335,166 | `a93b4a8da05dd96a` |
+| `124coverage_study.json` | 置信区间覆盖率研究：Ψ 作为标定诊断被证伪 + 区间口径警告 | 7,492 | `ec75a190effb964a` |
+| `124coverage_study-designs.csv` | 逐设计覆盖率表 | 264,231 | `2b5afdae281cd949` |
+
+完整 64 位摘要见 `06doc/0NDATACARD_C5_manifest.tsv`。
+
+---
+
+## 三、与稿件的对应
+- 稿件表 `tab:data`（数据卡表）列出的三个真实体系即本卡第一节三项。
+- 稿件正文与补充材料的每个数字，其来源产物见本卡第二节，并在 `06doc/02sub/claim_evidence_map.md` 中逐条绑定。
+
+## 四、缺失项
+
+无。

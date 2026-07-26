@@ -95,7 +95,7 @@ PROCESS_CLAIMS = [
     {
         "claim": "各源文件与派生文件的 SHA-256 摘要随代码登记",
         "where": "tab:data 表注 + Data & Code Availability",
-        "evidence": ROOT / "03data/.datalock-manifest.tsv",
+        "evidence": ROOT / "06doc/0NDATACARD_C5_manifest.tsv",
         "check": "manifest 存在且行数 = 登记文件数 + 表头",
     },
     {

@@ -1,0 +1,74 @@
+{
+  "study": "C5 killer control: Ψ_n(Fisher) vs 廉价启发式(ΔT/n_temps/线性cond) 预测真实反演误差 realCV_Ea",
+  "data": "54c5_realkinetics-designsweep.csv 真实苹果硬度动力学(Foods 2023), 16 超定>=3温真实子集",
+  "n_subsets": 16,
+  "ground_truth": "realCV_Ea = 真实测量 SD 经[硬度->k(T)->Arrhenius]全链 bootstrap 传播的 E_a 估计误差",
+  "marginal_spearman": {
+    "Psi_n": {
+      "spearman_vs_realCV": -0.8970588235294116,
+      "p": 2.4923759658858677e-06,
+      "abs": 0.8970588235294116
+    },
+    "deltaT": {
+      "spearman_vs_realCV": -0.7467728458225555,
+      "p": 0.000888370387270935,
+      "abs": 0.7467728458225555
+    },
+    "n_temps": {
+      "spearman_vs_realCV": -0.620505227994023,
+      "p": 0.010326676608180511,
+      "abs": 0.620505227994023
+    },
+    "cond_linear": {
+      "spearman_vs_realCV": 0.6794117647058824,
+      "p": 0.0037934326691597448,
+      "abs": 0.6794117647058824
+    }
+  },
+  "Psi_n_strictly_beats_all_heuristics_marginal": true,
+  "within_fixed_deltaT": {
+    "deltaT_4": {
+      "n": 3,
+      "spearman_Psin_realCV": -1.0,
+      "p": 0.0,
+      "cond_within_group_range_x": 1.0495320508013235
+    },
+    "deltaT_6": {
+      "n": 6,
+      "spearman_Psin_realCV": -0.6571428571428573,
+      "p": 0.15617492711370237,
+      "cond_within_group_range_x": 1.2784640703203973
+    },
+    "deltaT_8": {
+      "n": 7,
+      "spearman_Psin_realCV": -0.9642857142857145,
+      "p": 0.0004541491691941689,
+      "cond_within_group_range_x": 1.4513406128272184
+    }
+  },
+  "partial_spearman_control_deltaT": {
+    "Psi_n_given_deltaT": -0.8058823529411765,
+    "cond_given_deltaT": -0.09411764705882353,
+    "note": "控制温度范围后 Ψ_n 保留预测力而线性 cond 崩塌 => Ψ_n 捕获范围/cond 之外的可恢复性信息"
+  },
+  "Psi_differentiates_from_cond_on_C5": true,
+  "conclusion": "C5 上 Ψ_n(Fisher) 严格优于线性 cond/ΔT/n_temps 预测真实反演误差：边际 |Spearman| Ψ_n=0.90 > cond=0.68/ΔT=0.75；控制 ΔT 后偏 Spearman Ψ_n=-0.81 而 cond=-0.09(崩塌)。故 C5 上 Ψ_n 在排序上非≈cond，把'Ψ处处≈cond'收窄为'C6≈cond、C5不'。诚实机理：Ψ_n=N*lmin 与 cond=lmax/lmin 同源自一个 Arrhenius Fisher，Ψ_n≡monotone(lmin)，故差异本质=绝对(lmin)vs相对(比值)条件数=经典 Stewart-Sun(同 C6)、非新方法学；'控制ΔT后cond崩塌'因组内cond近常数结构性所致。",
+  "honest_boundaries": "(1) 单一真实数据集(苹果 Foods 2023)、16 个\\emph{非独立}超定子集(温度重叠)、realCV 为测量 SD 传播\\emph{非}独立重复，故为\\emph{排序}证据非强统计独立检验；(2) ΔT=6 组(n=6)较弱(p=0.16)，ΔT=4/8 清晰(p<5e-4)；(3) 食品体系(99_realkinetics2)同质 Ψ_n 不直接复现(Spearman +0.19 n.s.，冷冻惰性点破坏等方差)、需异方差 Ψ_het(-0.34, p=0.014)——即 Ψ_n 优势\\emph{条件于近等方差}，强异方差须用 Ψ_het；(4) 仅 C5(动力学)成立；C6(光谱线性恢复)κ_K 仍 ≈cond。",
+  "unified_Psi_het_cross_system": {
+    "apple_kinetics_computed": {
+      "n": 16,
+      "heteroscedasticity_sigma_max_over_min": 5.068642753335915,
+      "apple_Psi_het_spearman_vs_realCV": -0.8117647058823528,
+      "apple_Psi_het_p": 0.00013432237477471032,
+      "consistency_Psihet_vs_Psin_spearman": 0.8264705882352942,
+      "note": "苹果异方差度~5x，Ψ_het 仍强负相关 → 统一异方差 Fisher Ψ_het 在苹果亦预测真实反演误差"
+    },
+    "food_kinetics_99": {
+      "Psi_het_spearman": -0.344,
+      "p": 0.0145,
+      "source": "99_realkinetics2.json het_spearman_p",
+      "homoscedastic_Psi_n_fails": "+0.19 n.s."
+    },
+    "conclusion": "统一异方差 Fisher Ψ_het 跨 2 独立真实体系皆负相关：苹果 Ψ_het=-0.81(p=1.3e-04, 异方差度 5.1x)、食品 Ψ_het=-0.34(p=0.014)；Ψ_n 是 Ψ_het 的等方差特例。'第二体系失败'实为用错诊断(同质 Ψ_n)，改用原则性 Ψ_het 则两体系一致。诚实：仅 2 体系、食品弱、机理仍属绝对-vs-相对(robustness 非 novelty)。"
+  }
+}

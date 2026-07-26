@@ -1,0 +1,143 @@
+{
+  "script": "122criterion_bakeoff.py",
+  "source_csv": "04outputs/54c5_realkinetics-designsweep.csv",
+  "n_subsets_total": 26,
+  "n_overdetermined": 16,
+  "n_per_T": 5,
+  "reconstruction_check": {
+    "ratio_relative_spread": 8.766763359774654e-12,
+    "implied_sigma_lnk": 0.06209759748206603,
+    "spearman_vs_csv_lambda_min": 0.9999999999999999,
+    "cond_max_relerr_vs_csv": 3.6342484577289724e-11,
+    "note": "σ=1 重建与脚本 54 输出成恒定比例且排序 Spearman=1，故口径一致"
+  },
+  "lemma_fisher_numerical_check": {
+    "min_abs_cos_krug_vs_min_eigvec": 0.9999999999316744,
+    "note": "理论补偿线方向（斜率=调和均值温度）与数值最小特征方向的最小 |cos|；≈1 即引理 fisher 在全部 26 个真实子集上成立"
+  },
+  "spearman_marginal_vs_realCV": {
+    "crit_E": -0.8970588235294116,
+    "crit_D": -0.8676470588235294,
+    "crit_A": -0.8970588235294116,
+    "crit_c_deg": -0.8970588235294116,
+    "crit_c_krug": -0.8970588235294116,
+    "crit_c_Ea": -0.8970588235294116,
+    "crit_cond": 0.6794117647058824,
+    "deltaT": -0.7467728458225555,
+    "n_temps": -0.620505227994023
+  },
+  "spearman_partial_controlling_deltaT": {
+    "crit_E": -0.8222903394981398,
+    "crit_D": -0.6758001095624688,
+    "crit_A": -0.8222903394981398,
+    "crit_c_deg": -0.8222903394981398,
+    "crit_c_krug": -0.8222903394981398,
+    "crit_c_Ea": -0.8222903394981398,
+    "crit_cond": -0.05324182054304498
+  },
+  "ranking_by_abs_marginal": [
+    [
+      "crit_E",
+      -0.8970588235294116
+    ],
+    [
+      "crit_A",
+      -0.8970588235294116
+    ],
+    [
+      "crit_c_deg",
+      -0.8970588235294116
+    ],
+    [
+      "crit_c_krug",
+      -0.8970588235294116
+    ],
+    [
+      "crit_c_Ea",
+      -0.8970588235294116
+    ],
+    [
+      "crit_D",
+      -0.8676470588235294
+    ],
+    [
+      "deltaT",
+      -0.7467728458225555
+    ],
+    [
+      "crit_cond",
+      0.6794117647058824
+    ],
+    [
+      "n_temps",
+      -0.620505227994023
+    ]
+  ],
+  "criterion_collapse_in_near_singular_regime": {
+    "criteria_rank_equivalent_to_E": [
+      "crit_A",
+      "crit_c_Ea",
+      "crit_c_deg",
+      "crit_c_krug"
+    ],
+    "median_condition_number": 95962.2525686516,
+    "pairwise_spearman": {
+      "crit_E|crit_D": 0.9726495726495725,
+      "crit_E|crit_A": 0.9999999999999999,
+      "crit_E|crit_c_deg": 0.9999999999999999,
+      "crit_E|crit_c_krug": 0.9999999999999999,
+      "crit_E|crit_c_Ea": 0.9999999999999999,
+      "crit_E|crit_cond": -0.8078632478632478,
+      "crit_D|crit_A": 0.9726495726495725,
+      "crit_D|crit_c_deg": 0.9726495726495725,
+      "crit_D|crit_c_krug": 0.9726495726495725,
+      "crit_D|crit_c_Ea": 0.9726495726495725,
+      "crit_D|crit_cond": -0.6656410256410256,
+      "crit_A|crit_c_deg": 0.9999999999999999,
+      "crit_A|crit_c_krug": 0.9999999999999999,
+      "crit_A|crit_c_Ea": 0.9999999999999999,
+      "crit_A|crit_cond": -0.8078632478632478,
+      "crit_c_deg|crit_c_krug": 0.9999999999999999,
+      "crit_c_deg|crit_c_Ea": 0.9999999999999999,
+      "crit_c_deg|crit_cond": -0.8078632478632478,
+      "crit_c_krug|crit_c_Ea": 0.9999999999999999,
+      "crit_c_krug|crit_cond": -0.8078632478632478,
+      "crit_c_Ea|crit_cond": -0.8078632478632478
+    },
+    "interpretation": "在本文关心的近奇异设计区，条件数中位数达 9.6e+04，tr(M^-1)≈1/λ_min，故 A-最优、以及沿任何与补偿线不正交方向的 c-最优，都被 1/λ_min 支配，与 E-最优（本文 Ψ）秩等价（Spearman=1.000）。唯 D-最优不塌缩——它取特征值几何均值，被大特征值抬高，因而偏离真实误差排序。"
+  },
+  "E_vs_D_is_NOT_established": {
+    "bootstrap_marginal_gap": {
+      "point": 0.02967291223441589,
+      "ci95": [
+        -0.09540516761531974,
+        0.20444444444444432
+      ],
+      "P_D_at_least_as_good": 0.4448,
+      "n_resamples": 5000
+    },
+    "bootstrap_partial_gap": {
+      "point": 0.0922868523258542,
+      "ci95": [
+        -0.05350001545111561,
+        0.3303395990547733
+      ],
+      "P_D_at_least_as_good": 0.2658,
+      "n_resamples": 5000
+    },
+    "n_discordant_pairs": 6,
+    "n_pairs_total": 120,
+    "A_over_E_range": [
+      1.9999606316805665,
+      1.9999911756947921
+    ],
+    "lambda_min_fold_range": 5.13485352448651,
+    "lambda_max_fold_range": 1.6704137627187918,
+    "verdict": "E 相对 D 的优势【未达统计可辨】：两个 bootstrap CI 均含零，且 120 对中仅 6 对排序不同。不得作为结论写入正文。"
+  },
+  "honesty": [
+    "子集嵌套非独立，只报秩相关不报 p 值（与正文 §res-c5 同口径）",
+    "单一品种、单一真实数据集、16 个超定子集，结论为基准级而非机制级",
+    "若 D 或 A 胜出即照实报告"
+  ]
+}

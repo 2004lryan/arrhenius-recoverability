@@ -1,0 +1,73 @@
+{
+  "A_numbers": {
+    "n_zh_distinct": 192,
+    "n_en_distinct": 192,
+    "en_only": [],
+    "zh_only": [],
+    "pass": true
+  },
+  "B_citations_en": {
+    "n_cited": 57,
+    "n_bibitem": 57,
+    "undefined": [],
+    "uncited": [],
+    "pass": true
+  },
+  "B_citations_zh": {
+    "n_cited": 57,
+    "n_bibitem": 57,
+    "undefined": [],
+    "uncited": [],
+    "pass": true
+  },
+  "C_process_claims": {
+    "rows": [
+      {
+        "claim": "各源文件与派生文件的 SHA-256 摘要随代码登记",
+        "where": "tab:data 表注 + Data & Code Availability",
+        "check": "manifest 存在且行数 = 登记文件数 + 表头",
+        "evidence": "03data/.datalock-manifest.tsv",
+        "on_disk": true
+      },
+      {
+        "claim": "数据卡（CLAUDE.md §4.6 九项必填）已建立",
+        "where": "tab:data 自称『数据卡』",
+        "check": "文件存在且含源数据/派生/SHA-256 三节",
+        "evidence": "06doc/0NDATACARD_C5.md",
+        "on_disk": true
+      },
+      {
+        "claim": "食品体系经 Europe PMC 全文逐值复核",
+        "where": "tab:data 表注 + §data",
+        "check": "提取件在盘（复核记录见脚本 55 与 claim_evidence_map C24）",
+        "evidence": "03data/processed/pmc_real/PMC9319022_T3.csv",
+        "on_disk": true
+      },
+      {
+        "claim": "牛油果体系直接读取原始 xlsx、未作数值变换",
+        "where": "tab:data 表注",
+        "check": "原始文件在盘且只读引用（未复制进项目）",
+        "evidence": "<EXTERNAL_DATA_ROOT>/004_hass_avocado_rgb_ripening/Hass Avocado Ripening Photographic Dataset/Avocado Ripening Dataset.xlsx",
+        "on_disk": true
+      },
+      {
+        "claim": "每个正文数字均可回溯至具体脚本与结果文件",
+        "where": "Data & Code Availability",
+        "check": "映射表存在",
+        "evidence": "06doc/02sub/claim_evidence_map.md",
+        "on_disk": true
+      },
+      {
+        "claim": "派生产物 + 清单 + 代码已存入公开仓库并给出 DOI",
+        "where": "Data & Code Availability（CILS Option C 强制）",
+        "check": "★未完成——稿中为显式占位符，须由作者投稿前完成（W4）",
+        "evidence": null,
+        "on_disk": false
+      }
+    ],
+    "unsupported": [
+      "派生产物 + 清单 + 代码已存入公开仓库并给出 DOI"
+    ],
+    "pass": false
+  }
+}

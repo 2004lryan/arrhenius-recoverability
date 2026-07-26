@@ -1,0 +1,186 @@
+{
+  "script": "123montecarlo_criterion_study.py",
+  "seed": 20260725,
+  "n_designs_requested": 1000,
+  "n_designs_valid": 1000,
+  "n_reps_per_design": 400,
+  "anchors": {
+    "Ea_kJmol": {
+      "range": [
+        13.0,
+        70.0
+      ],
+      "source": "苹果 54c5_realkinetics.json: Red Delicious 51.0 / Granny Smith 61.4 / Royal Gala 68.5（剔除 Pink Lady 的病态 858）；食品 99_realkinetics2.json per_series: 13.8 / 29.4 等；牛油果 102_avocado_c5_pilot.json: 53.3"
+    },
+    "sigma_lnk": {
+      "range": [
+        0.06,
+        0.6
+      ],
+      "source": "苹果 σ_lnk=0.0621（54c5 full）；食品 per_series σ_lnk 0.34–0.58（99_realkinetics2）"
+    },
+    "T_C": {
+      "range": [
+        -18.0,
+        40.0
+      ],
+      "source": "苹果 2–10℃；牛油果 10/20℃；食品 −18/5/25/40℃（三体系并集）"
+    }
+  },
+  "design_independence": "每个设计为独立抽样（温度窗/水平数/布点/重复数/θ/σ 各自随机），非嵌套子集",
+  "ground_truth": "已知 θ；误差为 400 次噪声重复的 RMSE（真统计估计误差，非 bootstrap 噪声传播）",
+  "spearman_marginal": {
+    "E": -0.934900498900499,
+    "D": -0.8806970926970928,
+    "A": -0.9349045189045191,
+    "c_deg": -0.934900498900499,
+    "c_Ea": -0.9348731508731509,
+    "cond": 0.5794051954051954,
+    "dT": -0.5663628983628983,
+    "N_obs": -0.13595684378574466
+  },
+  "spearman_partial_controlling_dT": {
+    "E": -0.9032708789809835,
+    "D": -0.8922159308519053,
+    "A": -0.9032756154518317,
+    "c_deg": -0.9032708789809835,
+    "c_Ea": -0.9032095784012794
+  },
+  "E_vs_D_gap_bootstrap": {
+    "point": 0.05432956391546273,
+    "ci95": [
+      0.04299733016702143,
+      0.06664387604277733
+    ],
+    "P_D_at_least_as_good": 0.0
+  },
+  "decision_relevant_regret": {
+    "protocol": "每个场景从预算相近（N_obs 极差≤2×）的 8 个候选设计中，各准则各选其最优，记录所选设计真实相对误差相对该场景【神谕最优】的超额（regret）。共 3000 个场景。",
+    "n_scenarios": 3000,
+    "E_and_D_pick_same_design_rate": 0.7703333333333333,
+    "worst_vs_best_in_candidate_set_median": 36.52437037112413,
+    "by_criterion": {
+      "E": {
+        "median_regret_vs_oracle": 0.0,
+        "mean_regret_vs_oracle": 0.15484310969837764,
+        "p90_regret_vs_oracle": 0.5252592926998045,
+        "ci95_of_median": [
+          0.0,
+          0.0
+        ]
+      },
+      "D": {
+        "median_regret_vs_oracle": 0.0,
+        "mean_regret_vs_oracle": 0.32431615575341366,
+        "p90_regret_vs_oracle": 1.0235402391547725,
+        "ci95_of_median": [
+          0.0,
+          0.0
+        ]
+      },
+      "A": {
+        "median_regret_vs_oracle": 0.0,
+        "mean_regret_vs_oracle": 0.15484310969837764,
+        "p90_regret_vs_oracle": 0.5252592926998045,
+        "ci95_of_median": [
+          0.0,
+          0.0
+        ]
+      },
+      "c_deg": {
+        "median_regret_vs_oracle": 0.0,
+        "mean_regret_vs_oracle": 0.15484310969837764,
+        "p90_regret_vs_oracle": 0.5252592926998045,
+        "ci95_of_median": [
+          0.0,
+          0.0
+        ]
+      },
+      "c_Ea": {
+        "median_regret_vs_oracle": 0.0,
+        "mean_regret_vs_oracle": 0.1612400096922292,
+        "p90_regret_vs_oracle": 0.5252592926998045,
+        "ci95_of_median": [
+          0.0,
+          0.0
+        ]
+      },
+      "cond": {
+        "median_regret_vs_oracle": 0.8224274604245569,
+        "mean_regret_vs_oracle": 6.938573374559911,
+        "p90_regret_vs_oracle": 16.907466958682505,
+        "ci95_of_median": [
+          0.8040424017169565,
+          0.9977395051247753
+        ]
+      }
+    }
+  },
+  "two_axis_rate_validation": {
+    "all": {
+      "slope": -0.48386344832028283,
+      "slope_ci95": [
+        -0.48971045791226586,
+        -0.4787594151662099
+      ],
+      "r2": 0.9659237768528152,
+      "n": 1000
+    },
+    "narrow_window_half": {
+      "slope": -0.4786901887475485,
+      "slope_ci95": [
+        -0.48486669356163525,
+        -0.4723210355499204
+      ],
+      "r2": 0.9812693167457592,
+      "n": 500
+    },
+    "wide_window_half": {
+      "slope": -0.5169260320155118,
+      "slope_ci95": [
+        -0.5332831388053645,
+        -0.5014281483212983
+      ],
+      "r2": 0.9410905061779224,
+      "n": 500
+    },
+    "small_n_half": {
+      "slope": -0.4838664297398371,
+      "slope_ci95": [
+        -0.4921152165743004,
+        -0.47652721039249757
+      ],
+      "r2": 0.96714394545541,
+      "n": 508
+    },
+    "large_n_half": {
+      "slope": -0.4897277649132623,
+      "slope_ci95": [
+        -0.4973206933342478,
+        -0.48248568337493214
+      ],
+      "r2": 0.9682077546256866,
+      "n": 492
+    },
+    "theory": -0.5,
+    "note": "误差沿退化方向对 Ψ 的 log-log 斜率；理论预测 −1/2。按 ΔT 与按 N 各切一半分别拟合 = 两轴分别验证（闭合 L4/L5）。"
+  },
+  "unrecoverable_branch_saturation": {
+    "slope_low_Psi_15pct": -0.4311286536794829,
+    "n_low": 150,
+    "slope_high_Psi_50pct": -0.4885312777280514,
+    "n_high": 500,
+    "median_observed_over_extrapolated": 0.9287841894687535,
+    "ci95": [
+      0.9001581239435857,
+      0.9517011341228507
+    ],
+    "relerr_Ea_median_at_low_Psi": 0.15867737750093247,
+    "note": "可恢复档斜率外推到最低 15% 的 Ψ；比值 <1 即实测误差低于外推 = 误差饱和（第三档）。Cramér--Rao 界不预测饱和，故这是三分律相对纯 CRB 的独有预测。饱和的力学来源是 Θ 紧致：估计量被约束在有界参数空间内，误差不能无界增长。"
+  },
+  "honesty": [
+    "这是模拟研究：设计独立、真值已知、误差为真 RMSE，但数据非真实测量。",
+    "它替代的是被嵌套结构毁掉的自由度，不替代真实数据。",
+    "量程全部锚定到本项目已核验的真实值（见 anchors），非凭空设定。"
+  ]
+}

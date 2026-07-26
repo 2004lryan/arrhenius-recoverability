@@ -1,0 +1,141 @@
+{
+  "script": "120datacard_sha256.py",
+  "generated": "2026-07-25 21:55:51 -0400",
+  "n_source": 3,
+  "n_derived": 12,
+  "missing": [],
+  "rows": [
+    {
+      "kind": "source",
+      "id": "apple_firmness",
+      "path": "03data/processed/pmc_real/PMC10253207_T16.csv",
+      "sha256": "d22131f037a120e71a321d358e141ea0b8b2b8b97c4299706f4b0c8fad66665f",
+      "bytes": 1770,
+      "name": "苹果硬度温度梯度（4 品种 × 5 贮温 × 5 时间点）",
+      "role": "C5 真实动力学 / 体系 1",
+      "origin": "Foods 2023, doi:10.3390/foods12112113 (PMC10253207) 表 A1（开放获取）",
+      "extraction": "pandas.read_html 提取（脚本 55）+ 人工逐条核验；非本组采集",
+      "license": "CC BY 4.0（Foods 为全开放获取）"
+    },
+    {
+      "kind": "source",
+      "id": "food_ammonia_tbars",
+      "path": "03data/processed/pmc_real/PMC9319022_T3.csv",
+      "sha256": "ee6da3d22db941fe2936bba9817e3aa7873e408024ae9ab95d6bf48d536ccfbe",
+      "bytes": 5239,
+      "name": "长货架期食品 氨/TBARS 累积动力学（5 食品 × 4 贮温，10 序列）",
+      "role": "C5 真实动力学 / 体系 2",
+      "origin": "Foods 2022 11(14):2004, doi:10.3390/foods11142004 (PMC9319022) 表 3",
+      "extraction": "pandas.read_html 提取（脚本 55）+ Europe PMC fullTextXML 独立重抓逐值核对（132 行 0 处不一致）",
+      "license": "CC BY 4.0"
+    },
+    {
+      "kind": "source",
+      "id": "hass_avocado",
+      "path": "<EXTERNAL_DATA_ROOT>/004_hass_avocado_rgb_ripening/Hass Avocado Ripening Photographic Dataset/Avocado Ripening Dataset.xlsx",
+      "sha256": "f8abeaba6eedf67869907b3a71ee132cd89b42bb3dcce6b25ddb22e6269b51a7",
+      "bytes": 633351,
+      "name": "Hass 牛油果采后成熟（478 果 × 3 组贮藏，14,722 条记录）",
+      "role": "C5 真实动力学 / 体系 3（真统计估计误差）",
+      "origin": "Mendeley Data, doi:10.17632/3xd9n945v8.1",
+      "extraction": "原始 xlsx 直接读取（未做 L1 变换）；按 4.5 只读引用，未复制进项目",
+      "license": "CC BY 4.0（Mendeley Data 默认）"
+    },
+    {
+      "kind": "derived",
+      "id": "43trichotomy_formal",
+      "path": "04outputs/43trichotomy_formal.json",
+      "sha256": "3ddee85bf7b57f03b72a5dc30238d23c4288a434507e47e3272d130329f9e50d",
+      "bytes": 1317,
+      "name": "半合成三分律：Ψ 终值、塌缩斜率、Krug 匹配"
+    },
+    {
+      "kind": "derived",
+      "id": "54c5_realkinetics",
+      "path": "04outputs/54c5_realkinetics.json",
+      "sha256": "9ba2ab597b83d50a1909511c3c5296732aebf2088481f67fc9b6cbbb0671de71",
+      "bytes": 5987,
+      "name": "苹果体系：品种 Ea/R²、设计扫描、超定子集"
+    },
+    {
+      "kind": "derived",
+      "id": "54c5_realkinetics-designsweep",
+      "path": "04outputs/54c5_realkinetics-designsweep.csv",
+      "sha256": "2b1769aa0b095d5689630c019d18c017fe4298e185ff641d2bfb930522378cf5",
+      "bytes": 4115,
+      "name": "苹果 26 温度子集逐条（补充表 S2 数据源）"
+    },
+    {
+      "kind": "derived",
+      "id": "91c5_realkinetics_killer",
+      "path": "04outputs/91c5_realkinetics_killer.json",
+      "sha256": "64fc189dacbb29c76fb575545d8e29f3d68c695bfa3fc74c3c4c8183a01e0c30",
+      "bytes": 4103,
+      "name": "Ψ vs 廉价启发式判别力、Ψ_het 跨体系"
+    },
+    {
+      "kind": "derived",
+      "id": "99_realkinetics2",
+      "path": "04outputs/99_realkinetics2.json",
+      "sha256": "7b541f1778481b00bfbe0266fbf86c78d5a4cbad631bde48d8f9d1b0b6f33387",
+      "bytes": 14092,
+      "name": "食品体系：Ea 范围、同质/异质 Ψ 复现"
+    },
+    {
+      "kind": "derived",
+      "id": "102_avocado_c5_pilot",
+      "path": "04outputs/102_avocado_c5_pilot.json",
+      "sha256": "125ba608e12562763668d4b0cf33edafc02cc9a9815103dbcf04fb884b7d495b",
+      "bytes": 2519,
+      "name": "牛油果体系：真统计估计误差、n 轴扫描"
+    },
+    {
+      "kind": "derived",
+      "id": "119pazman_pronzato_bridge",
+      "path": "04outputs/119pazman_pronzato_bridge.json",
+      "sha256": "6d5f827620897f26a0ba90b6efd397b409f17f9a3163a7d8d212e16e648b8a1c",
+      "bytes": 2236,
+      "name": "与 Pázman–Pronzato 2006 算例的坐标对照"
+    },
+    {
+      "kind": "derived",
+      "id": "122criterion_bakeoff",
+      "path": "04outputs/122criterion_bakeoff.json",
+      "sha256": "273a0263ec9b06b8e9e325676f09c1c48e246bb30caaf38d0027a17c29178f21",
+      "bytes": 4854,
+      "name": "准则对决（含对自身假设的证伪：塌缩=代数、D 对比未建立）"
+    },
+    {
+      "kind": "derived",
+      "id": "123montecarlo_criterion_study",
+      "path": "04outputs/123montecarlo_criterion_study.json",
+      "sha256": "ebaea2757742c77abed5af1ddb8d89ef3c8db3e54665cddd4b525e71c5a488b3",
+      "bytes": 5924,
+      "name": "1000 独立设计 Monte-Carlo：两轴速率、饱和、决策 regret"
+    },
+    {
+      "kind": "derived",
+      "id": "123montecarlo_criterion_study-designs",
+      "path": "04outputs/123montecarlo_criterion_study-designs.csv",
+      "sha256": "a93b4a8da05dd96af272790d0b3ecb209199df361f81511ac68397c7e513b7b6",
+      "bytes": 335166,
+      "name": "逐设计表：准则值 + 真值 RMSE（正文 §sec:mc 数据源）"
+    },
+    {
+      "kind": "derived",
+      "id": "124coverage_study",
+      "path": "04outputs/124coverage_study.json",
+      "sha256": "ec75a190effb964a0f5d916ab30d9ce2345fc9135933ac8d54ad5a529a89de36",
+      "bytes": 7492,
+      "name": "置信区间覆盖率研究：Ψ 作为标定诊断被证伪 + 区间口径警告"
+    },
+    {
+      "kind": "derived",
+      "id": "124coverage_study-designs",
+      "path": "04outputs/124coverage_study-designs.csv",
+      "sha256": "2b5afdae281cd9498097575c8dd5637b7363596d45a10cdc064b21d428023c0d",
+      "bytes": 264231,
+      "name": "逐设计覆盖率表"
+    }
+  ]
+}

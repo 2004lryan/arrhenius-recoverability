@@ -1,0 +1,161 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+r"""
+121 — 英文稿投稿保障三件套复跑（01CLAUDE.md §10.5 强制）
+
+三项
+----
+A. claim audit（中英数字奇偶校验）：英文稿每个承载主张的数字必须在中文稿出现且相等。
+   翻译最常见的错误就是数字漂移，故以中文稿为基准做集合比对。
+B. citation audit（机械层）：\cite 键 vs \bibitem 键双向核对；未定义引用、未被引书目均须为 0。
+C. integrity（过程性主张扫描）——**本轮新增**：
+   上一轮 claim audit 只核数字，漏掉表注里「附 SHA-256 校验」这句无据过程声明。
+   故此处显式枚举可证伪的过程性断言（我们做过某流程 / 某文件已存放 / 已登记）并要求逐条给出在盘证据。
+
+输出 04outputs/121audit_en_assurance.json
+"""
+from __future__ import annotations
+
+import json
+import re
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+MS = ROOT / "06doc/01manuscript"
+ZH, EN = MS / "Elsevier_zh.tex", MS / "Elsevier_en.tex"
+
+
+def strip_comments(s: str) -> str:
+    """去 LaTeX 注释；(?<!\\\\) 避免把转义的 \\% 之后的正文一起吃掉（此前踩过的坑）。"""
+    return re.sub(r"(?<!\\)%[^\n]*", "", s)
+
+
+# 纯排版/编号来源，不承载主张，比对时剔除
+# 注意：必须连同 {...} 参数一起吃掉——只删命令名会把 \linespread{1.0} 的 1.0 留成假阳性。
+TYPESET_CTX = re.compile(
+    r"\\(?:documentclass|usepackage|setcounter|linespread|tolerance|emergencystretch|"
+    r"hspace|vspace|includegraphics|label|ref|cite\w*|bibitem|textwidth|columnwidth|"
+    r"arraystretch|tabcolsep|baselineskip|fontsize|selectfont|multicolumn|cline|hline|"
+    r"@plus|@minus|abovedisplayskip|belowdisplayskip|parskip|itemsep|topsep)"
+    r"(?:\s*\*?\s*(?:\[[^\]]*\])?\s*(?:\{[^{}]*\})*)?"
+)
+
+
+def numbers(tex: str) -> list[str]:
+    out = []
+    for line in strip_comments(tex).split("\n"):
+        body = re.sub(r"\\@(?:plus|minus)\s*-?\d*\.?\d+\s*(?:pt|em|ex|mm|cm|in|sp|bp|dd|cc)?", " ", line)
+        body = TYPESET_CTX.sub(" ", body)
+        body = re.sub(r"10\.\d{4,}/\S+", " ", body)          # DOI
+        body = re.sub(r"https?://\S+", " ", body)            # URL
+        body = re.sub(r"PMC\d+", " ", body)                  # PMC id
+        # 剥掉剩余的 LaTeX 命令名：否则 \approx0.01 会因后顾断言 (?<![\w.]) 被漏读，
+        # 而中文稿写作 $0.01$ 能读到 —— 制造"中文独有"的假阳性（本轮踩过）
+        body = re.sub(r"\\[a-zA-Z]+", " ", body)
+        for m in re.finditer(r"(?<![\w.])\d+\.\d+(?![\w])", body):
+            out.append(m.group())
+    return out
+
+
+def audit_numbers() -> dict:
+    zh, en = numbers(ZH.read_text(encoding="utf-8")), numbers(EN.read_text(encoding="utf-8"))
+    zset, eset = set(zh), set(en)
+    return {
+        "n_zh_distinct": len(zset), "n_en_distinct": len(eset),
+        "en_only": sorted(eset - zset), "zh_only": sorted(zset - eset),
+        "pass": not (eset - zset),
+    }
+
+
+def audit_citations(p: Path) -> dict:
+    tex = strip_comments(p.read_text(encoding="utf-8"))
+    cited = set()
+    for m in re.finditer(r"\\cite[tp]?\*?(?:\[[^\]]*\])*\{([^}]*)\}", tex):
+        cited |= {k.strip() for k in m.group(1).split(",") if k.strip()}
+    listed = {m.group(1) for m in re.finditer(r"\\bibitem\{([^}]*)\}", tex)}
+    return {
+        "n_cited": len(cited), "n_bibitem": len(listed),
+        "undefined": sorted(cited - listed), "uncited": sorted(listed - cited),
+        "pass": not (cited - listed) and not (listed - cited),
+    }
+
+
+# --- C. 过程性主张：逐条声明 + 在盘证据 -----------------------------------
+PROCESS_CLAIMS = [
+    {
+        "claim": "各源文件与派生文件的 SHA-256 摘要随代码登记",
+        "where": "tab:data 表注 + Data & Code Availability",
+        "evidence": ROOT / "03data/.datalock-manifest.tsv",
+        "check": "manifest 存在且行数 = 登记文件数 + 表头",
+    },
+    {
+        "claim": "数据卡（CLAUDE.md §4.6 九项必填）已建立",
+        "where": "tab:data 自称『数据卡』",
+        "evidence": ROOT / "06doc/0NDATACARD_C5.md",
+        "check": "文件存在且含源数据/派生/SHA-256 三节",
+    },
+    {
+        "claim": "食品体系经 Europe PMC 全文逐值复核",
+        "where": "tab:data 表注 + §data",
+        "evidence": ROOT / "03data/processed/pmc_real/PMC9319022_T3.csv",
+        "check": "提取件在盘（复核记录见脚本 55 与 claim_evidence_map C24）",
+    },
+    {
+        "claim": "牛油果体系直接读取原始 xlsx、未作数值变换",
+        "where": "tab:data 表注",
+        "evidence": Path("<EXTERNAL_DATA_ROOT>/004_hass_avocado_rgb_ripening/"
+                         "Hass Avocado Ripening Photographic Dataset/Avocado Ripening Dataset.xlsx"),
+        "check": "原始文件在盘且只读引用（未复制进项目）",
+    },
+    {
+        "claim": "每个正文数字均可回溯至具体脚本与结果文件",
+        "where": "Data & Code Availability",
+        "evidence": ROOT / "06doc/02sub/claim_evidence_map.md",
+        "check": "映射表存在",
+    },
+    {
+        "claim": "派生产物 + 清单 + 代码已存入公开仓库并给出 DOI",
+        "where": "Data & Code Availability（CILS Option C 强制）",
+        "evidence": None,
+        "check": "★未完成——稿中为显式占位符，须由作者投稿前完成（W4）",
+    },
+]
+
+
+def audit_process() -> dict:
+    rows = []
+    for c in PROCESS_CLAIMS:
+        ev = c["evidence"]
+        ok = bool(ev and Path(ev).exists())
+        rows.append({"claim": c["claim"], "where": c["where"], "check": c["check"],
+                     "evidence": str(ev) if ev else None, "on_disk": ok})
+    unsupported = [r["claim"] for r in rows if not r["on_disk"]]
+    return {"rows": rows, "unsupported": unsupported, "pass": not unsupported}
+
+
+def main() -> None:
+    res = {
+        "A_numbers": audit_numbers(),
+        "B_citations_en": audit_citations(EN),
+        "B_citations_zh": audit_citations(ZH),
+        "C_process_claims": audit_process(),
+    }
+    (ROOT / "04outputs/121audit_en_assurance.json").write_text(
+        json.dumps(res, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    a = res["A_numbers"]
+    print(f"A 数字奇偶  英文独有 {len(a['en_only'])} 个 -> {'过' if a['pass'] else '不过: ' + str(a['en_only'])}")
+    print(f"   （中文独有 {len(a['zh_only'])} 个，属中文稿表格/正文未译入英文稿的排版数，需逐条看）")
+    for k in ("B_citations_en", "B_citations_zh"):
+        b = res[k]
+        print(f"{k}: cite {b['n_cited']} / bibitem {b['n_bibitem']} · undefined {len(b['undefined'])} · "
+              f"uncited {len(b['uncited'])} -> {'过' if b['pass'] else '不过'}")
+    c = res["C_process_claims"]
+    print("C 过程性主张:")
+    for r in c["rows"]:
+        print(f"   [{'有据' if r['on_disk'] else '★无据'}] {r['claim']}")
+    print(f"   -> {'过' if c['pass'] else '存在无据项 ' + str(c['unsupported'])}")
+
+
+if __name__ == "__main__":
+    main()

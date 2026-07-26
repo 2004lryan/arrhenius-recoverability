@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 r"""
 121 — 英文稿投稿保障三件套复跑（01CLAUDE.md §10.5 强制）
 
@@ -19,6 +18,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 MS = ROOT / "06doc/01manuscript"
@@ -67,7 +67,7 @@ def numbers(tex: str) -> list[str]:
     return out
 
 
-def audit_numbers() -> dict:
+def audit_numbers() -> dict[str, Any]:
     zh, en = numbers(ZH.read_text(encoding="utf-8")), numbers(EN.read_text(encoding="utf-8"))
     zset, eset = set(zh), set(en)
     return {
@@ -77,7 +77,7 @@ def audit_numbers() -> dict:
     }
 
 
-def audit_citations(p: Path) -> dict:
+def audit_citations(p: Path) -> dict[str, Any]:
     tex = strip_comments(p.read_text(encoding="utf-8"))
     cited = set()
     for m in re.finditer(r"\\cite[tp]?\*?(?:\[[^\]]*\])*\{([^}]*)\}", tex):
@@ -91,7 +91,7 @@ def audit_citations(p: Path) -> dict:
 
 
 # --- C. 过程性主张：逐条声明 + 在盘证据 -----------------------------------
-PROCESS_CLAIMS = [
+PROCESS_CLAIMS: list[dict[str, Any]] = [
     {
         "claim": "各源文件与派生文件的 SHA-256 摘要随代码登记",
         "where": "tab:data 表注 + Data & Code Availability",
@@ -124,16 +124,24 @@ PROCESS_CLAIMS = [
         "check": "映射表存在",
     },
     {
-        "claim": "派生产物 + 清单 + 代码已存入公开仓库并给出 DOI",
-        "where": "Data & Code Availability（CILS Option C 强制）",
-        "evidence": None,
-        "check": "★未完成——稿中为显式占位符，须由作者投稿前完成（W4）",
+        "claim": "三个源数据集均由原作者存入公开仓库，本文以可解析 DOI 引用并链接",
+        "where": "Data & Code Availability（CILS Option C 的履行方式）",
+        "evidence": ROOT / "04outputs/125source_doi_verification.json",
+        "check": "脚本 125 按注册机构分流实查：Mendeley 走 DataCite、两篇 MDPI 走 Crossref，"
+                 "标题与类型均须与稿件用途相符（3/3 PASS，且皆 CC BY 4.0）",
+    },
+    {
+        "claim": "派生产物 + SHA-256 清单 + 全部代码已存入公开仓库并在文中链接",
+        "where": "Data & Code Availability",
+        "evidence": ROOT / "08github/data/SHA256-MANIFEST.tsv",
+        "check": "发布仓库内的清单在盘；仓库本身为 github.com/2004lryan/arrhenius-recoverability。"
+                 "注：本文未采集新数据，派生产物为计算输出与仿真产物，故不另铸数据集 DOI",
     },
 ]
 
 
-def audit_process() -> dict:
-    rows = []
+def audit_process() -> dict[str, Any]:
+    rows: list[dict[str, Any]] = []
     for c in PROCESS_CLAIMS:
         ev = c["evidence"]
         ok = bool(ev and Path(ev).exists())
